@@ -75,7 +75,10 @@ If `TracePoint` is available (Ruby >= 2 in most cases) all exceptions will have 
 If `TracePoint` is not available `raise` is overridden, and only **explicit calls to it** will print the backtrace.
 In this case exceptions raised by the Ruby interpreter will not have their backtrace printed.
 
-## Why
+By default `BacktraceAlways` acts like `warn` and will output to `$stderr` only if warnings are enabled.
+This can be changed by setting `BacktraceAlways.output` to the `IO` instance of your choosing.
+
+## Why?
 
 To ease the pain of tracking down bugs in bad codebases.
 
