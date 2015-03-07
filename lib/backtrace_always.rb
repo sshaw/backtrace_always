@@ -13,16 +13,13 @@ module BacktraceAlways
   extend self
 
   TP = defined?(TracePoint) ? TracePoint.new(:raise) { |e|
+                                #$stderr << "=== #{e}"
                                 return if e.raised_exception.is_a?(SystemExit)
                                 spew(e.raised_exception)
                               } : false
 
   def output=(location)
     @output = location
-  end
-
-  def output
-    @output
   end
 
   def enable!
@@ -78,6 +75,10 @@ module BacktraceAlways
 
   private
 
+  def output
+    @output
+  end
+
   def patched_method(method)
     "__og_#{method}__"
   end
@@ -108,7 +109,13 @@ module BacktraceAlways
     out = output
     return if out.nil? && $VERBOSE.nil? # try to act like warn()
 
+    bt = build_backtrace(e)
+
     out ||= $stderr
-    out << build_backtrace(e)
+    if out.respond_to?(:debug)
+      out.debug(bt)
+    else
+      out << bt
+    end
   end
 end

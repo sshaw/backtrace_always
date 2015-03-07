@@ -1,5 +1,7 @@
 # BacktraceAlways
 
+[![Build Status](https://travis-ci.org/sshaw/backtrace_always.svg?branch=master)](https://travis-ci.org/sshaw/backtrace_always)
+
 Always print the message, class, and backtrace when an exception is raised
 
 ## Overview
@@ -61,7 +63,7 @@ Bundler
 gem "backtrace_always"
 ```
 
-Rubygems
+RubyGems
 
 ```
 gem install backtrace_always
