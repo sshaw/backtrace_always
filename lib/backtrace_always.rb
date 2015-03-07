@@ -13,7 +13,6 @@ module BacktraceAlways
   extend self
 
   TP = defined?(TracePoint) ? TracePoint.new(:raise) { |e|
-                                #$stderr << "=== #{e}"
                                 return if e.raised_exception.is_a?(SystemExit)
                                 spew(e.raised_exception)
                               } : false
@@ -101,8 +100,28 @@ module BacktraceAlways
   end
 
   def build_backtrace(e)
-    message = sprintf("%s: %s (%s)\n", e.backtrace[1], e.message, e.class)
-    e.backtrace[2..-1].inject(message) { |message, m| message << "\tfrom #{m}\n" }
+    message  = sprintf("%s: %s (%s)\n", e.backtrace[1], e.message, e.class)
+
+    # This filter is *only* for calls that use BacktraceAlways(). Using it will generate
+    # backtraces that include itself and the passed block's surrounding context:
+    #
+    #  from bs.rb:10:in `foo'							# Show this
+    #  from backtrace_always/lib/backtrace_always.rb:7:in `BacktraceAlways'	# Skip this
+    #  from bs.rb:10:in `foo'							# Skip this
+
+    i  = 0
+    bt = e.backtrace[2..-1]
+    while i < bt.size
+      if bt[i+1] =~ %r{/backtrace_always/lib/backtrace_always.rb:\d+:in\s+`BacktraceAlways'}
+        i += 2
+        next
+      end
+
+      message << "\tfrom #{bt[i]}\n"
+      i+=1
+    end
+
+    message
   end
 
   def spew(e)
