@@ -30,7 +30,8 @@ ensure
 end
 
 RSpec.describe BacktraceAlways do
-  EXCEPTION_REGEX = /what what what! \(RuntimeError\)\n.+in `baz'\n.+in `bar'\n.+in `foo'/
+  # (?: ... )? is for matching on Rubinius and JRuby, which include the block in foo() to the trace
+  EXCEPTION_REGEX = /what what what! \(RuntimeError\)\n(?:.+\n)?.+in `baz'\n.+in `bar'\n.+in `foo'/
   EXCEPTION_INSPECT = "#<RuntimeError"
 
   describe "if it has not been enabled" do

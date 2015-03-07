@@ -53,6 +53,8 @@ io = File.open("out.log", "w")
 BacktraceAlways.output = io
 BacktraceAlways { foo } # backtrace to io
 io.close
+
+BacktraceAlways.output = logger  # Will log at debug level
 ```
 
 ## Installation
